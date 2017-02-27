@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MeGo</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_giro">giroscopio</string>
+    <string name="action_acel">acelerometro</string>
+    <string name="action_mag">magnetometro</string>
+    <string name="action_pitch">Pitch/roll/heading</string>
+
+    <string name="title_activity_gyroscope">gyroscope</string>
+</resources>
