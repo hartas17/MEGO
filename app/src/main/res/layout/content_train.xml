@@ -13,4 +13,66 @@
     tools:context="com.example.noubyte.mego.TrainActivity"
     tools:showIn="@layout/app_bar_train">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <TextView
+                android:text="Agregue al menos 10 repeticiones antes de enviar puede eliminar repeticiones en caso de haber agregado incorrectamente el ejercicio. Luego procesa a enviar los datos. Mientras mas repeticiones agregue, mejor será entrenado la IA."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView4"
+                />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:text="Agregar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button2"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:text="Eliminar"
+                    android:layout_width="188dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button4" />
+            </LinearLayout>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="131dp"
+                android:layout_weight="0.36" />
+
+            <TextView
+                android:text="Para validar el movimiento, presione el boton validar y procesda a seguir las instruccioens que aparecen en pantalla. El resultado se visualizará en el campo inferior."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5" />
+
+            <Button
+                android:text="Validar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/button3" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/editText"
+                android:layout_weight="0.56" />
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

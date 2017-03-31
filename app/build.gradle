@@ -31,11 +31,7 @@ repositories {
 repositories {
     jcenter()
 }
-allprojects {
-    repositories {
-        maven { url "https://jitpack.io" }
-    }
-}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -46,9 +42,13 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'io.palaima:smoothbluetooth:0.1.0'
+    compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.android.support:recyclerview-v7:24.0.+'
     compile 'com.afollestad.material-dialogs:commons:0.9.2.3'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     testCompile 'junit:junit:4.12'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    compile files('libs/ormlite-android-5.0.jar')
+    compile files('libs/ormlite-core-5.0.jar')
     compile 'com.google.android.gms:play-services-maps:9.8.0'
 }

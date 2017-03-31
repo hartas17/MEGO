@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -22,8 +23,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".gyroscope"
-            android:label="@string/title_activity_gyroscope"
+            android:name=".TrainActivity"
+            android:label="@string/title_activity_train"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

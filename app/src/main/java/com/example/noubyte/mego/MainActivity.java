@@ -1,6 +1,5 @@
 package com.example.noubyte.mego;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -49,6 +48,12 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
 
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -79,6 +84,7 @@ public class MainActivity extends AppCompatActivity
     private float valorx,valory,valorz;
     FloatingActionButton fab;
     private static final String TAG="MainActivity";
+    private static final int UDP_SERVER_PORT = 5005;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +186,29 @@ public class MainActivity extends AppCompatActivity
         mChart3.invalidate();
     }
 
+    private void runUdpClient(String udpMsg)  {
+        DatagramSocket ds = null;
+        try {
+            ds = new DatagramSocket();
+            InetAddress serverAddr = InetAddress.getByName("192.168.1.255");
+            DatagramPacket dp;
+            dp = new DatagramPacket(udpMsg.getBytes(), udpMsg.length(), serverAddr, UDP_SERVER_PORT);
+            ds.send(dp);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ds != null) {
+                ds.close();
+            }
+        }
+    }
+
     private void addEntry(float y,float rango) {
         LineData data = mChart.getData();
 
@@ -197,6 +226,7 @@ public class MainActivity extends AppCompatActivity
         int randomDataSetIndex = (int) (Math.random() * data.getDataSetCount());
         float yValue = (float)(Math.random() * 10) + 50f;
 
+        //data.addEntry(new Entry(data.getDataSetByIndex(randomDataSetIndex).getEntryCount(),y), randomDataSetIndex);
         data.addEntry(new Entry(data.getDataSetByIndex(randomDataSetIndex).getEntryCount(),y), randomDataSetIndex);
         data.notifyDataChanged();
 
@@ -205,9 +235,9 @@ public class MainActivity extends AppCompatActivity
 
 
         mChart.notifyDataSetChanged();
-        mChart.getAxisLeft().setAxisMaximum(rango*2);
-        mChart.getAxisLeft().setAxisMinimum(rango*-2);
-        mChart.setVisibleYRangeMaximum(rango*5, YAxis.AxisDependency.LEFT);
+        mChart.getAxisLeft().setAxisMaximum(rango);
+        mChart.getAxisLeft().setAxisMinimum(rango*(-1));
+        mChart.setVisibleYRangeMaximum(rango*2, YAxis.AxisDependency.LEFT);
 
         mChart.moveViewTo(data.getDataSetCount() - 7, 50f, YAxis.AxisDependency.LEFT);
     }
@@ -235,9 +265,9 @@ public class MainActivity extends AppCompatActivity
         // let the chart know it's data has changed
         mChart2.notifyDataSetChanged();
 
-        mChart2.getAxisLeft().setAxisMaximum(rango*2);
-        mChart2.getAxisLeft().setAxisMinimum(rango*-2);
-        mChart2.setVisibleYRangeMaximum(rango*5, YAxis.AxisDependency.LEFT);
+        mChart2.getAxisLeft().setAxisMaximum(rango);
+        mChart2.getAxisLeft().setAxisMinimum(rango*(-1));
+        mChart2.setVisibleYRangeMaximum(rango*2, YAxis.AxisDependency.LEFT);
 //
 //
         mChart2.moveViewTo(data.getDataSetCount() - 7, 50f, YAxis.AxisDependency.LEFT);
@@ -266,9 +296,9 @@ public class MainActivity extends AppCompatActivity
         mChart3.notifyDataSetChanged();
 
         //mChart3.setVisibleXRangeMaximum(6);
-        mChart3.getAxisLeft().setAxisMaximum(rango*2);
-        mChart3.getAxisLeft().setAxisMinimum(rango*-2);
-        mChart3.setVisibleYRangeMaximum(rango*5, YAxis.AxisDependency.LEFT);
+        mChart3.getAxisLeft().setAxisMaximum(rango);
+        mChart3.getAxisLeft().setAxisMinimum(rango*(-1));
+        mChart3.setVisibleYRangeMaximum(rango*2, YAxis.AxisDependency.LEFT);
 //
 //            // this automatically refreshes the chart (calls invalidate())
         mChart3.moveViewTo(data.getDataSetCount() - 7, 50f, YAxis.AxisDependency.LEFT);
@@ -360,14 +390,6 @@ public class MainActivity extends AppCompatActivity
                 medicion='g';
                 opcion.setText("Giroscopio");
                 break;
-            case R.id.action_mag:
-                medicion='m';
-                opcion.setText("Magnetometro");
-                break;
-            case R.id.action_pitch:
-                medicion='p';
-                opcion.setText("Pitch/Roll/Heading");
-                break;
         }
       return super.onOptionsItemSelected(item);
     }
@@ -379,8 +401,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
+            Intent inicio = new Intent(this,TrainActivity.class);
+            startActivity(inicio);
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
+            Intent inicio = new Intent(this,MainActivity.class);
+            startActivity(inicio);
         } else if (id == R.id.nav_slideshow) {
         } else if (id == R.id.nav_manage) {
         } else if (id == R.id.nav_share) {
@@ -481,18 +507,20 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onDataReceived(int data) {
             val+=(char)data;
+
             if(data==10){
-                String [] spl=val.split("\t");
-                if(spl.length>=5){
+                String [] spl=val.split(" ");
+                System.out.println(val);
+                if(spl.length>=8){
                     float y1,y2,y3;
                     switch(medicion){
                         case 'a':
-                            y1=Float.parseFloat(spl[1].split(" ")[1]);
-                            y2=Float.parseFloat(spl[1].split(" ")[2]);
-                            y3=Float.parseFloat(spl[1].split(" ")[3]);
-                            addEntry(y1,2f);
-                            addEntry2(y2,2f);
-                            addEntry3(y3,2f);
+                            y1=Float.parseFloat(spl[1]);
+                            y2=Float.parseFloat(spl[2]);
+                            y3=Float.parseFloat(spl[3]);
+                            addEntry(y1,2);
+                            addEntry2(y2,2);
+                            addEntry3(y3,2);
                             if (Math.abs(valorx-Math.abs(y1))>0.05){
                                 System.out.println("movimiento en x");
                             }
@@ -506,37 +534,15 @@ public class MainActivity extends AppCompatActivity
                             valory=Math.abs(y2);
                             valorz=Math.abs(y3);
                             break;
-                        case 'm':
+                        case 'g':
                             //System.out.println(spl[2]);
                             //System.out.println(spl[2].split(" ").length);
-                            y1=Float.parseFloat(spl[2].split(" ")[1]);
-                            y2=Float.parseFloat(spl[2].split(" ")[2]);
-                            y3=Float.parseFloat(spl[2].split(" ")[3]);
-                            addEntry(y1,1f);
-                            addEntry2(y2,1f);
-                            addEntry3(y3,1f);
-                            break;
-                        case 'g':
-                            //System.out.println(spl[0]);
-                            //System.out.println(spl[0].split(" ").length);
-                            y1=Float.parseFloat(spl[0].split(" ")[1]);
-                            y2=Float.parseFloat(spl[0].split(" ")[2]);
-                            y3=Float.parseFloat(spl[0].split(" ")[3]);
-                            addEntry(y1,245f);
-                            addEntry2(y2,245f);
-                            addEntry3(y3,245f);
-                            break;
-                        case 'p':
-                            /* System.out.println(spl[3]);
-                            System.out.println(spl[3].split(" ").length);
-                            System.out.println(spl[4]);
-                            System.out.println(spl[4].split(" ").length);*/
-                           y1=Float.parseFloat(spl[3].split(" ")[2]);
-                            y2=Float.parseFloat(spl[3].split(" ")[3]);
-                            y3=Float.parseFloat(spl[4].split(" ")[1]);
-                            addEntry(y1,100);
-                            addEntry2(y2,200);
-                            addEntry3(y3,100);
+                            y1=Float.parseFloat(spl[4]);
+                            y2=Float.parseFloat(spl[5]);
+                            y3=Float.parseFloat(spl[6]);
+                            addEntry(y1,300);
+                            addEntry2(y2,300);
+                            addEntry3(y3,300);
                             break;
                     }
                     val="";

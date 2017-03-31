@@ -10,4 +10,7 @@
     <string name="action_pitch">Pitch/roll/heading</string>
 
     <string name="title_activity_gyroscope">gyroscope</string>
+    <string name="title_activity_train">TrainActivity</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
